@@ -4,8 +4,8 @@ import re
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
+import openai
 import streamlit as st
-from openai import OpenAI
 from PIL import Image
 
 # =========================
@@ -20,16 +20,16 @@ st.set_page_config(
 # =========================
 # Helper Functions
 # =========================
-def get_client() -> OpenAI:
+def get_client() -> None:
     """
-    OpenAI 클라이언트
+    OpenAI 클라이언트를 위한 API Key 설정
     API Key는 Streamlit Secrets에서 읽어옵니다.
     """
     api_key = st.secrets.get("OPENAI_API_KEY", "")
     if not api_key:
         st.error("OPENAI_API_KEY가 설정되지 않았습니다. Streamlit Secrets에 등록해 주세요.")
         st.stop()
-    return OpenAI(api_key=api_key)
+    openai.api_key = api_key
 
 
 def bytes_to_data_url(image_bytes: bytes, mime: str = "image/jpeg") -> str:
@@ -197,7 +197,7 @@ st.divider()
 run = st.button("🔎 추천 보고서 생성", type="primary", use_container_width=True)
 
 if run:
-    client = get_client()
+    get_client()  # API 키 설정
 
     user_text = f"""
 [사용자 조건]
@@ -217,10 +217,11 @@ if run:
 
     with st.spinner("AI가 중고차 후보를 분석 중입니다..."):
         # OpenAI 호출 함수 (응답 받기)
-        response = client.Completions.create(
+        response = openai.Completion.create(
             model=model,
             prompt=user_text,
             temperature=temperature,
+            max_tokens=2000  # 적절한 길이 설정
         )
         
         # 응답 처리
