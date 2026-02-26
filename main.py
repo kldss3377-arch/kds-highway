@@ -175,7 +175,7 @@ with col1:
     region = st.text_input("거주/구매 지역(예: 대전, 서울)", value="대전")
     must_have_options = st.multiselect(
         "필수 옵션",
-        ["후방카메라", "어댑티브 크루즈", "차선유지", "통풍시트", "열선시트", "썬루프"],
+        ["후방카메라", "어댑티브 크루즈", "차선유지", "통풍시트", "열선시트", "썬루프", "블루투스"],
         default=["후방카메라", "블루투스"],
     )
     annual_mileage_km = st.number_input("연간 주행거리(km, 선택)", min_value=0, max_value=60000, value=12000, step=1000)
