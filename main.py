@@ -144,7 +144,7 @@ with st.sidebar:
     st.header("설정")
     model = st.selectbox(
         "모델 선택",
-        options=["gpt-4.1-mini", "gpt-4.1", "gpt-4o-mini", "gpt-4o"],
+        options=["gpt-4", "gpt-3.5-turbo"],  # 최신 모델을 사용합니다.
         index=0,
         help="모델 선택"
     )
@@ -217,15 +217,18 @@ if run:
 
     with st.spinner("AI가 중고차 후보를 분석 중입니다..."):
         # OpenAI 호출 함수 (응답 받기)
-        response = openai.Completion.create(
+        response = openai.ChatCompletion.create(
             model=model,
-            prompt=user_text,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_text}
+            ],
             temperature=temperature,
             max_tokens=2000  # 적절한 길이 설정
         )
         
         # 응답 처리
-        result = parse_json_safely(response['choices'][0]['text'])
+        result = parse_json_safely(response['choices'][0]['message']['content'])
 
     # =========================
     # 추천 결과 출력
